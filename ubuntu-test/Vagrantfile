@@ -17,6 +17,7 @@ config.vm.define "ubuntu-test#{i + 1}" do |node|
   node.vm.box = IMAGE
   node.vm.network :public_network, bridge: BRIDGE
   config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--groups", "Ansible-tests"]
     vb.name = "ubuntu-test#{i + 1}"
     vb.cpus = CPUS
     vb.memory = MEMORY
