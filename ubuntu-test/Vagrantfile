@@ -1,8 +1,10 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-NODE_COUNT = 2
-IMAGE = "generic/ubuntu1804"
+UBUNTU_NODE_COUNT = 2
+CENTOS_NODE_COUNT = 1
+UBUNTU_IMAGE = "generic/ubuntu1804"
+CENTOS_IMAGE = "centos/7"
 BRIDGE = "wlp4s0"
 CPUS = 1
 MEMORY = 512
@@ -11,10 +13,10 @@ Vagrant.configure("2") do |config|
 config.ssh.insert_key = false
 config.vm.synced_folder ".", "/vagrant", disabled: true
 
-(1..NODE_COUNT).each do |i|
+(1..UBUNTU_NODE_COUNT).each do |i|
 config.vm.define "ubuntu-test#{i}" do |node|
   node.vm.hostname = "ubuntu-test#{i}"
-  node.vm.box = IMAGE
+  node.vm.box = UBUNTU_IMAGE
   node.vm.network :public_network, bridge: BRIDGE
   config.vm.provider :virtualbox do |vb|
     vb.name = "ubuntu-test#{i}"
@@ -22,7 +24,7 @@ config.vm.define "ubuntu-test#{i}" do |node|
     vb.memory = MEMORY
   end
   config.vm.provision "shell" do |s|
-    ssh_pub_key = File.readlines("#{Dir.home}/.ssh/ansible_id_rsa.pub").first.strip
+    ssh_pub_key = File.readlines("#{Dir.home}/.ssh/root_id_rsa.pub").first.strip
     s.inline = <<-SHELL
       echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
       mkdir -p /root/.ssh && chmod 0700 /root/.ssh && echo #{ssh_pub_key} >> /root/.ssh/authorized_keys && chmod 0600 /root/.ssh/authorized_keys
@@ -30,4 +32,25 @@ config.vm.define "ubuntu-test#{i}" do |node|
   end
 end
 end
+
+(1..CENTOS_NODE_COUNT).each do |i|
+config.vm.define "centos-test#{i}" do |node|
+  node.vm.hostname = "centos-test#{i}"
+  node.vm.box = CENTOS_IMAGE
+  node.vm.network :public_network, bridge: BRIDGE
+  config.vm.provider :virtualbox do |vb|
+    vb.name = "centos-test#{i}"
+    vb.cpus = CPUS
+    vb.memory = MEMORY
+  end
+  config.vm.provision "shell" do |s|
+    ssh_pub_key = File.readlines("#{Dir.home}/.ssh/root_id_rsa.pub").first.strip
+    s.inline = <<-SHELL
+      echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+      mkdir -p /root/.ssh && chmod 0700 /root/.ssh && echo #{ssh_pub_key} >> /root/.ssh/authorized_keys && chmod 0600 /root/.ssh/authorized_keys
+    SHELL
+  end
+end
+end
+
 end
