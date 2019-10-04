@@ -1,0 +1,37 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+UBUNTU_NODE_COUNT = 4
+UBUNTU_IMAGE = "ubuntu/bionic64"
+BRIDGE = "wlp4s0"
+CPUS = 1
+MEMORY = 512
+
+Vagrant.configure("2") do |config|
+config.ssh.insert_key = false
+config.vm.synced_folder ".", "/vagrant", disabled: true
+
+(1..UBUNTU_NODE_COUNT).each do |i|
+config.vm.define "bionic#{i}" do |node|
+  node.vm.hostname = "bionic#{i}"
+  node.vm.box = UBUNTU_IMAGE
+  #node.vm.network :public_network, bridge: BRIDGE
+  node.vm.network :private_network, ip: "192.168.88.1#{i}"
+  #node.vm.network :forwarded_port, guest: 80, host: "808#{i}"
+  config.vm.provider :virtualbox do |vb|
+    vb.name = "bionic#{i}"
+    vb.cpus = CPUS
+    vb.memory = MEMORY
+    vb.linked_clone = true
+  end
+  config.vm.provision "shell" do |s|
+    ssh_pub_key = File.readlines("#{Dir.home}/.ssh/ansible_id_rsa.pub").first.strip
+    s.inline = <<-SHELL
+      echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+      mkdir -p /root/.ssh && chmod 0700 /root/.ssh && echo #{ssh_pub_key} >> /root/.ssh/authorized_keys && chmod 0600 /root/.ssh/authorized_keys
+    SHELL
+  end
+end
+end
+
+end
