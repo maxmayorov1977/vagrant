@@ -8,8 +8,11 @@ CPUS = 1
 MEMORY = 512
 
 Vagrant.configure("2") do |config|
+config.vbguest.auto_update = false
+#config.vbguest.iso_path = "/home/user/vagrant/VBoxGuestAdditions_5.2.8.iso"
+#config.disksize.size = '8GB'
 config.ssh.insert_key = false
-config.vm.synced_folder ".", "/vagrant", disabled: true
+#config.vm.synced_folder ".", "/home/vagrant", type: "nfs"
 
 (1..UBUNTU_NODE_COUNT).each do |i|
 config.vm.define "bionic#{i}" do |node|
