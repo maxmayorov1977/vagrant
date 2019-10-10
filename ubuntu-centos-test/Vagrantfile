@@ -3,7 +3,7 @@
 
 UBUNTU_NODE_COUNT = 2
 CENTOS_NODE_COUNT = 0
-UBUNTU_IMAGE = "generic/ubuntu1804"
+UBUNTU_IMAGE = "ubuntu/bionic64"
 CENTOS_IMAGE = "centos/7"
 BRIDGE = "wlp4s0"
 CPUS = 1
