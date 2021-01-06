@@ -28,14 +28,16 @@ config.vm.define "bionic#{i}" do |node|
     vb.linked_clone = true
   end
   config.vm.provision "shell" do |s|
-    ssh_pub_key = File.readlines("#{Dir.home}/.ssh/ansible_id_rsa.pub").first.strip
+    ansible_pub_key = File.readlines("#{Dir.home}/.ssh/ansible_id_rsa.pub").first.strip
     s.inline = <<-SHELL
-      echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
-      mkdir -p /root/.ssh && chmod 0700 /root/.ssh && echo #{ssh_pub_key} >> /root/.ssh/authorized_keys && chmod 0600 /root/.ssh/authorized_keys
+      #echo #{ansible_pub_key} >> /home/vagrant/.ssh/authorized_keys
+      echo #{ansible_pub_key} >> /home/ubuntu/.ssh/authorized_keys
+      mkdir -p /root/.ssh && chmod 0700 /root/.ssh && echo #{ansible_pub_key} >> /root/.ssh/authorized_keys && chmod 0600 /root/.ssh/authorized_keys
     SHELL
   end
   #config.vm.provision "ansible" do |ansible|
-  #  ansible.playbook = "/etc/ansible/playbooks/www/apache.yml"
+  #  ansible.limit = "manager"
+  #  ansible.playbook = "/home/user/ansible/playbooks/server/step0/manage/docker-swarm.yml"
   #end
 end
 end

@@ -1,17 +1,18 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-IMAGE = "freebsd/FreeBSD-12.2-STABLE"
+IMAGE = "alpine/alpine64"
 BRIDGE = "wlp4s0"
 CPUS = 1
 MEMORY = 1024
 
 Vagrant.configure("2") do |config|
   config.vm.box = IMAGE
-  config.vm.hostname = "freebsd"
+  #config.vm.box_version = "3.6.0"
+  config.vm.hostname = "alpine"
   config.vm.network :public_network, bridge: BRIDGE
   config.vm.provider "virtualbox" do |v|
-    v.name = "Freebsd-12_64"
+    v.name = "Alpine-3.7_64"
     v.cpus = CPUS
     v.memory = MEMORY
   end
